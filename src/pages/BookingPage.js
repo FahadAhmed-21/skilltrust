@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { auth, db } from "../firebase";
-import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, updateDoc, setDoc, arrayUnion } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 export default function BookingPage() {

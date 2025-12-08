@@ -10,15 +10,32 @@ export default function UserProfile() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(userRef);
-        if (docSnap.exists()) {
-          setProfile(docSnap.data());
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const userRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(userRef);
+          if (docSnap.exists()) {
+            setProfile(docSnap.data());
+          } else {
+            // Show default profile if document doesn't exist
+            setProfile({
+              displayName: user.displayName || user.email?.split('@')[0] || "User",
+              email: user.email,
+              photoURL: user.photoURL || null,
+              languages: [],
+              nfts: []
+            });
+          }
+        } else {
+          setProfile(null);
         }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        setProfile(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchProfile();
   }, []);

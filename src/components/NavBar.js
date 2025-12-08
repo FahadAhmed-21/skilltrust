@@ -1,11 +1,12 @@
-// src/components/NavBar.js
+// src/components/NavBar.js - Duolingo Style Left Sidebar
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 
 export default function NavBar({ setUser }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -17,27 +18,58 @@ export default function NavBar({ setUser }) {
     navigate("/");
   };
 
+  const isActive = (path) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
+
+  const navItems = [
+    { path: '/dashboard', label: 'Learn', icon: '📚' },
+    { path: '/booking', label: 'Bookings', icon: '📅' },
+    { path: '/code-editor', label: 'Practice', icon: '💻' },
+    { path: '/profile', label: 'Profile', icon: '👤' },
+    { path: '/admin', label: 'More', icon: '⚙️' },
+  ];
+
   return (
-    <div className="navbar">
-      <div className="nav-title">SkillTrust</div>
-      <div className="nav-links">
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/booking">Book Session</Link>
-        <Link to="/admin">Admin Panel</Link>
-        <Link to="/code-editor">Code Editor</Link>
-        <Link to="/chat/sample-session-id">Chat</Link>
-        <Link to="/profile">
-          <img 
-            src={auth.currentUser?.photoURL || 'https://placehold.co/40x40/0f1724/FFFFFF?text=P'} 
-            alt="profile" 
-            className="profile-pic" 
-            style={{ width: '40px', height: '40px' }} 
+    <div className="left-sidebar">
+      <div className="sidebar-logo">SkillTrust</div>
+      
+      <nav className="sidebar-nav">
+        {navItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+          >
+            <span>{item.icon}</span>
+            <span>{item.label}</span>
+          </Link>
+        ))}
+      </nav>
+
+      <div className="sidebar-footer">
+        <div className="sidebar-profile" onClick={() => navigate('/profile')}>
+          <img
+            src={auth.currentUser?.photoURL || 'https://placehold.co/40x40/1a2a32/FFFFFF?text=P'}
+            alt="profile"
           />
-        </Link>
-        <button className="button" onClick={handleLogout}>Logout</button>
+          <div className="sidebar-profile-info">
+            <div className="sidebar-profile-name">
+              {auth.currentUser?.displayName || 'User'}
+            </div>
+            <div className="sidebar-profile-email">
+              {auth.currentUser?.email || ''}
+            </div>
+          </div>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="btn-3d btn-3d-secondary"
+          style={{ width: '100%', marginTop: '12px', fontSize: '12px', padding: '10px' }}
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
 }
-
-

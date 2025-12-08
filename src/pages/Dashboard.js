@@ -1,10 +1,9 @@
-// src/pages/Dashboard.js
+// src/pages/Dashboard.js - Duolingo Style Learning Path
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import Notifications from "../components/Notifications";
-import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard({ user }) {
   const navigate = useNavigate();
@@ -18,6 +17,14 @@ export default function Dashboard({ user }) {
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
           setProfile(docSnap.data());
+        } else {
+          setProfile({
+            displayName: user.displayName || "Learner",
+            tokens: 0,
+            nfts: [],
+            sessions: [],
+            languages: []
+          });
         }
       }
       setLoading(false);
@@ -25,189 +32,194 @@ export default function Dashboard({ user }) {
     fetchProfile();
   }, [user]);
 
+  const learningUnits = [
+    {
+      id: 1,
+      title: "React Fundamentals",
+      description: "Master the basics of React including components, props, state, and hooks.",
+      progress: 60,
+      skills: ["Components", "Props", "State", "Hooks", "Events"],
+      completedSkills: ["Components", "Props", "State"],
+      completed: false
+    },
+    {
+      id: 2,
+      title: "Python Programming",
+      description: "Learn Python from scratch. Cover syntax, data structures, and basic algorithms.",
+      progress: 30,
+      skills: ["Syntax", "Variables", "Loops", "Functions", "Classes"],
+      completedSkills: ["Syntax", "Variables"],
+      completed: false
+    },
+    {
+      id: 3,
+      title: "Blockchain Basics",
+      description: "Understand blockchain technology, smart contracts, and Web3 development.",
+      progress: 0,
+      skills: ["Blockchain", "Smart Contracts", "Web3", "NFTs", "DeFi"],
+      completedSkills: [],
+      completed: false,
+      locked: true
+    },
+    {
+      id: 4,
+      title: "UI/UX Design",
+      description: "Learn design principles, user research, wireframing, and prototyping.",
+      progress: 0,
+      skills: ["Design Principles", "User Research", "Wireframing", "Prototyping"],
+      completedSkills: [],
+      completed: false,
+      locked: true
+    }
+  ];
+
+  const handleUnitClick = (unit) => {
+    if (unit.locked) {
+      alert("Complete previous units to unlock this one!");
+      return;
+    }
+    navigate(`/booking?skill=${encodeURIComponent(unit.title)}`);
+  };
+
   const mintSkillToken = async () => {
     if (!profile) return;
     const userRef = doc(db, "users", user.uid);
     await updateDoc(userRef, {
-      tokens: profile.tokens + 100
+      tokens: (profile.tokens || 0) + 100
     });
-    setProfile(prev => ({ ...prev, tokens: prev.tokens + 100 }));
+    setProfile(prev => ({ ...prev, tokens: (prev.tokens || 0) + 100 }));
     alert("100 SKLT minted!");
   };
 
   const mintResumeNFT = async () => {
     if (!profile) return;
     const userRef = doc(db, "users", user.uid);
-    const newNftName = `Resume NFT #${profile.nfts.length + 1}`;
+    const newNftName = `Resume NFT #${(profile.nfts?.length || 0) + 1}`;
     await updateDoc(userRef, {
       nfts: arrayUnion(newNftName)
     });
-    setProfile(prev => ({ ...prev, nfts: [...prev.nfts, newNftName] }));
+    setProfile(prev => ({ ...prev, nfts: [...(prev.nfts || []), newNftName] }));
     alert(`Resume NFT "${newNftName}" minted!`);
   };
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-  };
-  const listVariants = {
+  const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
   };
-  const listItemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.4,
+        ease: "easeOut"
+      }
+    }
   };
-  
-  const topMentors = [
-    { name: "Alice", skill: "UI/UX Design", rating: 4.8 },
-    { name: "Bob", skill: "Python Programming", rating: 4.5 },
-    { name: "Charlie", skill: "Blockchain 101", rating: 4.9 },
-  ];
 
   if (loading) {
-    return <div className="container" style={{ paddingTop: 40, textAlign: 'center' }}>Loading...</div>;
-  }
-  if (!profile) {
-    return <div className="container" style={{ paddingTop: 40, textAlign: 'center' }}>Please log in to view your dashboard.</div>;
+    return (
+      <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+        Loading...
+      </div>
+    );
   }
 
-  const nextSession = profile.sessions && profile.sessions.length > 0 ? profile.sessions[0] : null;
+  if (!profile) {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+        Please log in to view your dashboard.
+      </div>
+    );
+  }
 
   return (
-    <div className="container" style={{ paddingTop: 40, paddingBottom: 40, display: 'flex', gap: '20px' }}>
-      {/* Left Column: Profile and Main Actions */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', flex: '1' }}>
-        {/* Profile and Streak */}
-        <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <motion.div
-            className="dashboard-card"
-            variants={cardVariants}
-            whileHover={{ scale: 1.01, boxShadow: '0 15px 40px rgba(124,58,237,0.2)' }}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <img
-                src={profile.photoURL || 'https://placehold.co/60x60/0f1724/FFFFFF?text=P'}
-                alt="profile"
-                className="profile-pic"
-                style={{ width: '60px', height: '60px', margin: 0 }}
-              />
-              <div>
-                <h2 className="card-title" style={{ marginBottom: 0 }}>
-                  {profile.displayName || "Learner"}
-                </h2>
-                <p style={{ color: 'var(--muted)', fontSize: '14px', margin: 0 }}>
-                  Total SKLT: {profile.tokens}
-                </p>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Hero Section */}
+      <motion.div variants={itemVariants} className="hero-section">
+        <h1 style={{ 
+          fontSize: '32px', 
+          fontWeight: 700, 
+          color: 'var(--text-primary)', 
+          marginBottom: '12px',
+          lineHeight: 1.2
+        }}>
+          Welcome back, {profile.displayName || 'Learner'}! 👋
+        </h1>
+        <p style={{ 
+          fontSize: '16px', 
+          color: 'var(--text-secondary)', 
+          lineHeight: 1.6,
+          marginBottom: '24px'
+        }}>
+          Continue your learning journey and unlock new skills. Each unit brings you closer to mastery.
+        </p>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <button onClick={() => navigate('/booking')} className="btn-primary">
+            Book a Session
+          </button>
+          <button onClick={mintSkillToken} className="btn-3d btn-3d-blue">
+            Mint 100 SKLT
+          </button>
+          <button onClick={mintResumeNFT} className="btn-3d btn-3d-purple">
+            Mint Resume NFT
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Learning Path */}
+      <div className="learning-path">
+        <motion.div variants={itemVariants} className="path-header">
+          <h1 className="path-title">Your Learning Path</h1>
+          <p className="path-subtitle">
+            Continue your journey and unlock new skills. Each unit builds on the previous one.
+          </p>
+        </motion.div>
+
+        <div className="path-units">
+          {learningUnits.map((unit, index) => (
+            <motion.div
+              key={unit.id}
+              variants={itemVariants}
+              className={`path-unit ${unit.completed ? 'completed' : ''} ${unit.locked ? 'locked' : ''}`}
+              onClick={() => handleUnitClick(unit)}
+              style={{ opacity: unit.locked ? 0.5 : 1 }}
+            >
+              <div className="path-unit-header">
+                <h2 className="path-unit-title">{unit.title}</h2>
+                <span className="path-unit-progress">{unit.progress}% Complete</span>
               </div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <h2 className="card-title" style={{ marginBottom: 0, color: 'var(--accent-3)' }}>
-                1 Day 🔥
-              </h2>
-              <p style={{ color: 'var(--muted)', fontSize: '14px', margin: 0 }}>
-                Streak
-              </p>
-            </div>
-          </motion.div>
-        </Link>
-
-        {/* Next Session Card */}
-        <motion.div className="dashboard-card" variants={cardVariants} whileHover={{ scale: 1.03 }}>
-          <h2 className="card-title">Next Session</h2>
-          {nextSession ? (
-            <p style={{ color: 'var(--muted)', fontSize: '14px' }}>
-              **{nextSession.skill}** with {nextSession.mentor} on **{nextSession.date}** at **{nextSession.time}**
-            </p>
-          ) : (
-            <p style={{ color: 'var(--muted)', fontSize: '14px' }}>
-              You have no upcoming sessions.
-            </p>
-          )}
-          <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-            <button onClick={() => navigate('/booking')} className="btn-primary" style={{ flex: 1 }}>
-              Book a New Session
-            </button>
-            {nextSession && (
-              <button onClick={() => navigate(`/session/${nextSession.sessionId}`)} className="btn-primary" style={{ flex: 1, background: 'var(--accent)' }}>
-                Join Session
-              </button>
-            )}
-          </div>
-        </motion.div>
-        
-        {/* Minting Buttons Card */}
-        <motion.div className="dashboard-card" variants={cardVariants} whileHover={{ scale: 1.03 }}>
-          <h2 className="card-title">Mint Your Progress</h2>
-          <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
-            <button onClick={mintSkillToken} className="btn-primary">
-              Mint 100 SKLT
-            </button>
-            <button onClick={mintResumeNFT} className="btn-primary">
-              Mint Resume NFT
-            </button>
-          </div>
-        </motion.div>
-
-        <Notifications />
+              <p className="path-unit-description">{unit.description}</p>
+              <div className="path-unit-skills">
+                {unit.skills.map((skill, skillIndex) => {
+                  const isCompleted = unit.completedSkills.includes(skill);
+                  const isLocked = unit.locked || (!isCompleted && skillIndex > unit.completedSkills.length);
+                  return (
+                    <span
+                      key={skillIndex}
+                      className={`skill-badge ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`}
+                    >
+                      {isCompleted && '✓ '}
+                      {skill}
+                    </span>
+                  );
+                })}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
-
-      {/* Right Column: Progress and Community */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', flex: '1' }}>
-        <motion.div className="dashboard-card" variants={cardVariants} whileHover={{ scale: 1.03 }}>
-          <h2 className="card-title">Resume NFTs</h2>
-          {profile.nfts && profile.nfts.length > 0 ? (
-            <motion.ul variants={listVariants} style={{ listStyle: 'none', padding: 0 }}>
-              {profile.nfts.map((nft, i) => (
-                <motion.li key={i} className="list-item" variants={listItemVariants}>
-                  {nft}
-                </motion.li>
-              ))}
-            </motion.ul>
-          ) : (
-            <p style={{ color: 'var(--muted)', fontSize: '14px' }}>No NFTs minted yet.</p>
-          )}
-        </motion.div>
-
-        <motion.div className="dashboard-card" variants={cardVariants} whileHover={{ scale: 1.03 }}>
-          <h2 className="card-title">Languages</h2>
-          {profile.languages && profile.languages.length > 0 ? (
-            <motion.ul variants={listVariants} style={{ listStyle: 'none', padding: 0 }}>
-              {profile.languages.map((lang, i) => (
-                <motion.li key={i} className="list-item" variants={listItemVariants}>
-                  {lang}
-                </motion.li>
-              ))}
-            </motion.ul>
-          ) : (
-            <p style={{ color: 'var(--muted)', fontSize: '14px' }}>No languages added yet.</p>
-          )}
-        </motion.div>
-
-        <motion.div className="dashboard-card" variants={cardVariants} whileHover={{ scale: 1.03 }}>
-          <h2 className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-award">
-              <circle cx="12" cy="8" r="6" />
-              <path d="M15.477 15.45l-2.4 1.8L12 21l-1.08-3.75-2.4-1.8A6 6 0 0 1 12 14a6 6 0 0 1 3.477 1.45z" />
-            </svg>
-            <span>Top Mentors</span>
-          </h2>
-          <motion.ul variants={listVariants} style={{ listStyle: 'none', padding: 0 }}>
-            {topMentors.map((mentor, i) => (
-              <motion.li key={i} className="list-item" variants={listItemVariants}>
-                {mentor.name} - {mentor.skill} ({mentor.rating} ⭐)
-              </motion.li>
-            ))}
-          </motion.ul>
-        </motion.div>
-      </div>
-    </div>
+    </motion.div>
   );
 }
-
-
-
-
-
-
