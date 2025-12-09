@@ -25,6 +25,7 @@ export default function NavBar({ setUser }) {
   const navItems = [
     { path: '/dashboard', label: 'Learn', icon: '📚' },
     { path: '/booking', label: 'Bookings', icon: '📅' },
+    { path: '/live-chat', label: 'Live Chat', icon: '💬' },
     { path: '/code-editor', label: 'Practice', icon: '💻' },
     { path: '/profile', label: 'Profile', icon: '👤' },
     { path: '/admin', label: 'More', icon: '⚙️' },
