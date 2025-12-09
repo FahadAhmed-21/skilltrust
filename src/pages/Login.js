@@ -91,18 +91,18 @@ export default function Login({ setUser }) {
         <div className="auth">
           <div>
             <div className="label">Continue with</div>
-            <button className="btn-primary" onClick={doGoogle} disabled={loading}>
+            <button className="btn-cta" onClick={doGoogle} disabled={loading}>
               {loading ? "Please wait..." : "Continue with Google"}
             </button>
             <div className="center hint" style={{marginTop:8}}>or use email</div>
             <div style={{marginTop:10}}>
               <div className="label">Email</div>
-              <input className="input" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@mail.com" />
+              <input className="input-gradient" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@mail.com" />
               <div className="label">Password</div>
-              <input className="input" type="password" value={pw} onChange={e=>setPw(e.target.value)} placeholder="••••••••" />
+              <input className="input-gradient" type="password" value={pw} onChange={e=>setPw(e.target.value)} placeholder="••••••••" />
             </div>
             <div style={{display:'flex', gap:8, marginTop:8}}>
-              <button className="btn-primary" onClick={doEmail} disabled={loading}>
+              <button className="btn-cta" onClick={doEmail} disabled={loading}>
                 {isRegister ? "Create account" : "Sign in"}
               </button>
               <button className="btn-ghost" onClick={()=>setIsRegister(!isRegister)}>{isRegister ? "Already have account?" : "Create account"}</button>
@@ -113,7 +113,7 @@ export default function Login({ setUser }) {
             
             {/* New wallet connect button */}
             <div style={{marginTop:24}}>
-              <button className="btn-primary" onClick={connectWallet} disabled={walletConnected} style={{ background: walletConnected ? 'var(--mid-30)' : 'linear-gradient(90deg, #ff00ff, #00ffff)' }}>
+              <button className="btn-cta" onClick={connectWallet} disabled={walletConnected}>
                 {walletConnected ? "Wallet Connected" : "Connect Wallet"}
               </button>
             </div>
@@ -128,6 +128,3 @@ export default function Login({ setUser }) {
     </div>
   );
 }
-
-
-

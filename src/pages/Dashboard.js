@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { useMocks, fetchUserProfile, mockMintTokens, mockMintNFT } from "../mocks";
 
 export default function Dashboard({ user }) {
   const navigate = useNavigate();
@@ -12,7 +13,16 @@ export default function Dashboard({ user }) {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (user) {
+      // Use mocks when enabled
+      if (useMocks) {
+        const mockProfile = await fetchUserProfile();
+        setProfile(mockProfile);
+        setLoading(false);
+        return;
+      }
+
+      // Use Firebase when not using mocks
+      if (user && db) {
         const userRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
@@ -83,23 +93,44 @@ export default function Dashboard({ user }) {
 
   const mintSkillToken = async () => {
     if (!profile) return;
-    const userRef = doc(db, "users", user.uid);
-    await updateDoc(userRef, {
-      tokens: (profile.tokens || 0) + 100
-    });
-    setProfile(prev => ({ ...prev, tokens: (prev.tokens || 0) + 100 }));
-    alert("100 SKLT minted!");
+    
+    if (useMocks) {
+      const result = await mockMintTokens(100);
+      setProfile(prev => ({ ...prev, tokens: result.newBalance }));
+      alert("100 SKLT minted (mock)!");
+      return;
+    }
+
+    if (db && user) {
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        tokens: (profile.tokens || 0) + 100
+      });
+      setProfile(prev => ({ ...prev, tokens: (prev.tokens || 0) + 100 }));
+      alert("100 SKLT minted!");
+    }
   };
 
   const mintResumeNFT = async () => {
     if (!profile) return;
-    const userRef = doc(db, "users", user.uid);
-    const newNftName = `Resume NFT #${(profile.nfts?.length || 0) + 1}`;
-    await updateDoc(userRef, {
-      nfts: arrayUnion(newNftName)
-    });
-    setProfile(prev => ({ ...prev, nfts: [...(prev.nfts || []), newNftName] }));
-    alert(`Resume NFT "${newNftName}" minted!`);
+    
+    if (useMocks) {
+      const newNftName = `Resume NFT #${(profile.nfts?.length || 0) + 1}`;
+      const result = await mockMintNFT({ name: newNftName });
+      setProfile(prev => ({ ...prev, nfts: [...(prev.nfts || []), newNftName] }));
+      alert(`Resume NFT "${newNftName}" minted (mock)!`);
+      return;
+    }
+
+    if (db && user) {
+      const userRef = doc(db, "users", user.uid);
+      const newNftName = `Resume NFT #${(profile.nfts?.length || 0) + 1}`;
+      await updateDoc(userRef, {
+        nfts: arrayUnion(newNftName)
+      });
+      setProfile(prev => ({ ...prev, nfts: [...(prev.nfts || []), newNftName] }));
+      alert(`Resume NFT "${newNftName}" minted!`);
+    }
   };
 
   const containerVariants = {
@@ -166,13 +197,13 @@ export default function Dashboard({ user }) {
           Continue your learning journey and unlock new skills. Each unit brings you closer to mastery.
         </p>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          <button onClick={() => navigate('/booking')} className="btn-primary">
+          <button onClick={() => navigate('/booking')} className="btn-cta">
             Book a Session
           </button>
-          <button onClick={mintSkillToken} className="btn-3d btn-3d-blue">
+          <button onClick={mintSkillToken} className="btn-3d-gradient">
             Mint 100 SKLT
           </button>
-          <button onClick={mintResumeNFT} className="btn-3d btn-3d-purple">
+          <button onClick={mintResumeNFT} className="btn-3d-gradient">
             Mint Resume NFT
           </button>
         </div>

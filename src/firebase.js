@@ -12,16 +12,25 @@ const firebaseConfig = {
   appId: "1:578409234697:web:cc97fc9ea822b23339d3d8"
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();
-export const db = getFirestore(app);
+// Check if mocks are enabled via environment variable
+const useMocks = process.env.REACT_APP_USE_MOCKS === 'true';
 
+let app, auth, provider, db;
+
+if (useMocks) {
+  console.warn('⚠️ Firebase is DISABLED - Using mock data for local development');
+  // Export null/mock objects when mocks are enabled
+  app = null;
+  auth = null;
+  provider = null;
+  db = null;
+} else {
+  // Initialize Firebase normally for production
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  provider = new GoogleAuthProvider();
+  db = getFirestore(app);
+}
+
+export { auth, provider, db };
 export default app;
-
-
-
-
-
-
-

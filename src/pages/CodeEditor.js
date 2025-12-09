@@ -14,25 +14,21 @@ export default function CodeEditor() {
 
   const compileCode = () => {
     setLoading(true);
-    let consoleOutput = "";
-    const originalConsoleLog = console.log;
+    
+    // TODO: Implement secure sandbox execution (e.g., Web Workers, iframe sandbox)
+    // For now, using mock runner for security
+    const mockRunnerOutput = `Execution disabled (mock)
+    
+⚠️  Code execution is currently disabled for security reasons.
+    
+Your code:
+${code}
 
-    // Override console.log to capture output
-    console.log = (...args) => {
-      consoleOutput += args.join(' ') + '\n';
-    };
-
-    try {
-      // Execute the JavaScript code in the browser
-      new Function(code)();
-    } catch (error) {
-      consoleOutput += `Error: ${error.message}`;
-    } finally {
-      // Restore the original console.log
-      console.log = originalConsoleLog;
-      setOutput(consoleOutput);
-      setLoading(false);
-    }
+TODO: Integrate secure sandbox environment for safe code execution.
+Options: Web Workers, sandboxed iframe, or server-side execution.`;
+    
+    setOutput(mockRunnerOutput);
+    setLoading(false);
   };
 
   const cardVariants = {

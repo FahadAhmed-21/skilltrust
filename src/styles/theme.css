@@ -1,0 +1,305 @@
+/* src/styles/theme.css - Gradient UI Theme */
+
+/* Root level color variables and typography */
+:root {
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --gradient-cta: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
+  
+  --bg-primary: #0a0e27;
+  --bg-secondary: #1a2332;
+  --bg-tertiary: #0f1729;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --border-color: #2a3a4a;
+  
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.2);
+  --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.4);
+  
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-code: 'Fira Code', 'Monaco', 'Consolas', monospace;
+}
+
+/* Gradient CTA Buttons */
+.btn-cta {
+  background: var(--gradient-cta);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+  font-family: var(--font-primary);
+}
+
+.btn-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 36px rgba(124, 58, 237, 0.4);
+}
+
+.btn-cta:hover::before {
+  left: 100%;
+}
+
+.btn-cta:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Glass Card Design */
+.card {
+  background: rgba(26, 35, 50, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow-medium);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-cta);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-strong);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* Floating Action Button with Gradient */
+.fab-gradient {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 64px;
+  height: 64px;
+  background: var(--gradient-cta);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.fab-gradient:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 12px 36px rgba(124, 58, 237, 0.6);
+}
+
+.fab-gradient::after {
+  content: '+';
+  color: white;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* Glass panel effect for forms */
+.glass-panel {
+  background: rgba(26, 35, 50, 0.8);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: var(--gradient-cta);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* Enhanced input fields */
+.input-gradient {
+  background: rgba(26, 35, 50, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: all 0.3s ease;
+  font-family: var(--font-primary);
+}
+
+.input-gradient:focus {
+  outline: none;
+  border-color: #7c3aed;
+  background: rgba(26, 35, 50, 0.7);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+
+/* Skill badge with gradient */
+.badge-gradient {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--gradient-primary);
+  color: white;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.badge-gradient:hover {
+  transform: scale(1.05);
+}
+
+/* Progress bar with gradient */
+.progress-gradient {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-gradient-fill {
+  height: 100%;
+  background: var(--gradient-cta);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+}
+
+/* 3D Button Effect */
+.btn-3d-gradient {
+  background: var(--gradient-cta);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 0 #5b21b6, 0 8px 16px rgba(124, 58, 237, 0.3);
+  transform: translateY(0);
+}
+
+.btn-3d-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #5b21b6, 0 12px 20px rgba(124, 58, 237, 0.4);
+}
+
+.btn-3d-gradient:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #5b21b6, 0 4px 8px rgba(124, 58, 237, 0.3);
+}
+
+/* Animated gradient background */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bg-animated-gradient {
+  background: linear-gradient(270deg, #667eea, #764ba2, #f093fb, #667eea);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* Glow effect */
+.glow-effect {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4),
+              0 0 40px rgba(124, 58, 237, 0.2);
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.6),
+              0 0 60px rgba(124, 58, 237, 0.3);
+}
+
+/* Typography enhancements */
+.heading-gradient {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  background: var(--gradient-cta);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: var(--font-primary);
+}
+
+.subheading {
+  font-size: 20px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-family: var(--font-primary);
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7c3aed, #a855f7);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6d28d9, #9333ea);
+}

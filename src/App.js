@@ -6,6 +6,7 @@ import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import NavBar from "./components/NavBar";
 import RightSidebar from "./components/RightSidebar";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import BookingPage from "./pages/BookingPage";
@@ -85,26 +86,19 @@ const AuthWrapper = () => {
       </div>
       {showRightSidebar && profile && <RightSidebar profile={profile} />}
       {user && <FloatingChatbot />}
+      
+      {/* Floating Action Button */}
+      <div className="fab-gradient" onClick={() => alert('Quick Actions:\n• Book a Session\n• Start Learning\n• Mint Tokens')}></div>
     </div>
   );
 };
 
 export default function App() {
   return (
-    <Router>
-      <AuthWrapper />
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <AuthWrapper />
+      </Router>
+    </ErrorBoundary>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
