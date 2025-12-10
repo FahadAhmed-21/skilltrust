@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import { useMocks, fetchUserProfile, mockMintTokens, mockMintNFT } from "../mocks";
+import { useMocks, fetchUserProfile, mockMintTokens, mockMintNFT, mockCourses, mockUserProfile } from "../mocks";
 
 // Animated Skill Badge Component
 const SkillBadge = ({ skill, isCompleted, isLocked, delay = 0 }) => {
@@ -114,50 +114,52 @@ export default function Dashboard({ user }) {
     fetchProfile();
   }, [user]);
 
-  const learningUnits = [
-    {
-      id: 1,
-      title: "React Fundamentals",
-      description: "Master the basics of React including components, props, state, and hooks.",
-      progress: 60,
-      skills: ["Components", "Props", "State", "Hooks", "Events"],
-      completedSkills: ["Components", "Props", "State"],
-      icon: "⚛️",
-      color: "#00FFD1"
-    },
-    {
-      id: 2,
-      title: "Python Programming",
-      description: "Learn Python from scratch. Cover syntax, data structures, and basic algorithms.",
-      progress: 30,
-      skills: ["Syntax", "Variables", "Loops", "Functions", "Classes"],
-      completedSkills: ["Syntax", "Variables"],
-      icon: "🐍",
-      color: "#00C7FF"
-    },
-    {
-      id: 3,
-      title: "Blockchain Basics",
-      description: "Understand blockchain technology, smart contracts, and Web3 development.",
-      progress: 0,
-      skills: ["Blockchain", "Smart Contracts", "Web3", "NFTs", "DeFi"],
-      completedSkills: [],
-      locked: true,
-      icon: "⛓️",
-      color: "#00F5A0"
-    },
-    {
-      id: 4,
-      title: "UI/UX Design",
-      description: "Learn design principles, user research, wireframing, and prototyping.",
-      progress: 0,
-      skills: ["Design Principles", "User Research", "Wireframing", "Prototyping"],
-      completedSkills: [],
-      locked: true,
-      icon: "🎨",
-      color: "#00FFE0"
-    }
-  ];
+  // === Course Icon Map ===
+  const getCourseIcon = (category) => {
+    const icons = {
+      "Programming": "💻",
+      "Web Development": "🌐",
+      "Database": "🗄️",
+      "AI/ML": "🤖",
+      "Cybersecurity": "🔒",
+      "Web3": "⛓️",
+      "Cloud": "☁️",
+      "Soft Skills": "🎯",
+      "Languages": "🗣️"
+    };
+    return icons[category] || "📚";
+  };
+
+  // === Course Color Map ===
+  const getCourseColor = (category) => {
+    const colors = {
+      "Programming": "#00FFD1",
+      "Web Development": "#00C7FF",
+      "Database": "#00F5A0",
+      "AI/ML": "#00FFE0",
+      "Cybersecurity": "#FF6B6B",
+      "Web3": "#FFB800",
+      "Cloud": "#9D4EDD",
+      "Soft Skills": "#FF69B4",
+      "Languages": "#32CD32"
+    };
+    return colors[category] || "#00FFD1";
+  };
+
+  const learningUnits = mockCourses.map((course, index) => ({
+
+    id: index + 1,
+    title: course.title,
+    description: `${course.category} - ${course.difficulty} level course`,
+    progress: course.progress,
+    skills: course.tags || ["Skills", "Development", "Practice"],
+    completedSkills: course.progress > 0 ? ["Introduction", "Basics"] : [],
+    icon: getCourseIcon(course.category),
+    color: getCourseColor(course.category),
+    locked: course.progress === 0
+  }));
+
+
 
   const handleUnitClick = (unit) => {
     if (unit.locked) {
@@ -464,7 +466,7 @@ export default function Dashboard({ user }) {
             color: '#00FF9C',
             fontWeight: 600,
           }}>
-            4 Courses Available
+            {mockCourses.length} Courses Available
           </span>
         </div>
         

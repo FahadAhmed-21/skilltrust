@@ -1,116 +1,57 @@
-// src/pages/UserProfile.js
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { auth, db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { useMocks, mockUserProfile } from "../mocks";
 
 export default function UserProfile() {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const profile = useMocks ? mockUserProfile : null;
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const userRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(userRef);
-          if (docSnap.exists()) {
-            setProfile(docSnap.data());
-          } else {
-            // Show default profile if document doesn't exist
-            setProfile({
-              displayName: user.displayName || user.email?.split('@')[0] || "User",
-              email: user.email,
-              photoURL: user.photoURL || null,
-              languages: [],
-              nfts: []
-            });
-          }
-        } else {
-          setProfile(null);
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        setProfile(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-  };
-  const listVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
-  const listItemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  if (loading) {
-    return <div className="container" style={{ paddingTop: 40, textAlign: 'center' }}>Loading...</div>;
-  }
   if (!profile) {
-    return <div className="container" style={{ paddingTop: 40, textAlign: 'center' }}>Please log in to view your profile.</div>;
+    return (
+      <div className="profile-container">
+        <p>Please log in to view your profile.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="container" style={{ paddingTop: 40, paddingBottom: 40 }}>
-      <div className="hero-card fade-in" style={{ padding: 28, maxWidth: '600px', margin: '0 auto', display: 'block' }}>
-        <img
-          src={profile.photoURL || 'https://placehold.co/96x96/0f1724/FFFFFF?text=P'}
-          alt="profile"
-          className="profile-pic"
-        />
-        <h1 className="section-title" style={{ marginTop: 10, marginBottom: 10, textAlign: 'center' }}>
-          {profile.displayName}
-        </h1>
-        <p style={{ textAlign: 'center', color: 'var(--muted)', marginBottom: 20 }}>
-          {profile.email}
-        </p>
-        
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={listVariants}
-        >
-          <div className="dashboard-card" variants={cardVariants} style={{ marginBottom: 20 }}>
-            <h2 className="card-title">Languages Known</h2>
-            <motion.ul variants={listVariants}>
-              {profile.languages && profile.languages.length > 0 ? (
-                profile.languages.map((lang, i) => (
-                  <motion.li key={i} className="list-item" variants={listItemVariants}>
-                    {lang}
-                  </motion.li>
-                ))
-              ) : (
-                <p style={{ color: 'var(--muted)', fontSize: '14px' }}>No languages added yet.</p>
-              )}
-            </motion.ul>
-          </div>
-          
-          <div className="dashboard-card" variants={cardVariants}>
-            <h2 className="card-title">My Resume NFTs</h2>
-            <motion.ul variants={listVariants}>
-              {profile.nfts && profile.nfts.length > 0 ? (
-                profile.nfts.map((nft, i) => (
-                  <motion.li key={i} className="list-item" variants={listItemVariants}>
-                    {nft}
-                  </motion.li>
-                ))
-              ) : (
-                <p style={{ color: 'var(--muted)', fontSize: '14px' }}>No NFTs minted yet.</p>
-              )}
-            </motion.ul>
-          </div>
-        </motion.div>
+    <motion.div
+      className="profile-container-premium"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* HEADER */}
+      <div className="profile-header-premium">
+        <img src={profile.photoURL} className="profile-avatar-premium" />
+        <div>
+          <h1>{profile.displayName}</h1>
+          <p>{profile.email}</p>
+        </div>
       </div>
-    </div>
+
+      {/* STATS ROW */}
+      <div className="profile-stats-row">
+        <div className="profile-stat">Tokens: {profile.tokens}</div>
+        <div className="profile-stat">NFTs: {profile.nfts.length}</div>
+        <div className="profile-stat">Sessions: {profile.sessions.length}</div>
+        <div className="profile-stat">Languages: {profile.languages.join(", ")}</div>
+      </div>
+
+      {/* ACHIEVEMENTS */}
+      <div className="profile-section">
+        <h2>Achievements</h2>
+        <div className="achievements-grid">
+          {profile.nfts.map((n, i) => (
+            <motion.div
+              key={i}
+              className="achievement-card"
+              whileHover={{ scale: 1.05 }}
+            >
+              🏆 {n}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
   );
 }

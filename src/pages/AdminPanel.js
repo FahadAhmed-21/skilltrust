@@ -1,17 +1,15 @@
 // src/pages/AdminPanel.js
 import React from "react";
 import { motion } from "framer-motion";
+import { mockBookings, mockMentors, mockCourses, mockUserProfile } from "../mocks";
 
 export default function AdminPanel() {
-  const disputes = [
-    { id: 1, user: "Alice", skill: "UI/UX Design", status: "Open" },
-    { id: 2, user: "Bob", skill: "Python Programming", status: "Closed" },
-  ];
-
+  // Calculate dynamic metrics from mock data
   const metrics = {
-    users: 52,
-    sessions: 120,
-    tokensMinted: 5400,
+    users: mockMentors.length,
+    sessions: mockBookings.length,
+    tokensMinted: mockUserProfile.tokens * mockBookings.length,
+    courses: mockCourses.length
   };
 
   const cardVariants = {
@@ -23,7 +21,7 @@ export default function AdminPanel() {
     <div className="container" style={{ paddingTop: 40, paddingBottom: 40 }}>
       <h1 className="section-title">Admin Dashboard</h1>
       <p style={{ textAlign: 'center', color: 'var(--muted)', marginBottom: 20 }}>
-        This is a mock-up of the admin panel for platform management.
+        Platform management dashboard with real-time metrics.
       </p>
 
       <motion.div
@@ -38,27 +36,38 @@ export default function AdminPanel() {
             <li className="list-item">Total Users: {metrics.users}</li>
             <li className="list-item">Total Sessions: {metrics.sessions}</li>
             <li className="list-item">SKLT Minted: {metrics.tokensMinted}</li>
+            <li className="list-item">Total Courses: {metrics.courses}</li>
           </ul>
         </div>
         
         <div className="dashboard-card" style={{ gridColumn: '1 / -1' }}>
-          <h2 className="card-title">Recent Disputes</h2>
+          <h2 className="card-title">Recent Bookings</h2>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ color: 'var(--accent)', borderBottom: '1px solid var(--muted)' }}>
                 <th style={{ padding: '8px', textAlign: 'left' }}>ID</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>User</th>
+                <th style={{ padding: '8px', textAlign: 'left' }}>Mentor</th>
                 <th style={{ padding: '8px', textAlign: 'left' }}>Skill</th>
+                <th style={{ padding: '8px', textAlign: 'left' }}>Date</th>
+                <th style={{ padding: '8px', textAlign: 'left' }}>Time</th>
                 <th style={{ padding: '8px', textAlign: 'left' }}>Status</th>
               </tr>
             </thead>
             <tbody>
-              {disputes.map(d => (
-                <tr key={d.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <td style={{ padding: '8px' }}>#{d.id}</td>
-                  <td style={{ padding: '8px' }}>{d.user}</td>
-                  <td style={{ padding: '8px' }}>{d.skill}</td>
-                  <td style={{ padding: '8px' }}>{d.status}</td>
+              {mockBookings.map(booking => (
+                <tr key={booking.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td style={{ padding: '8px' }}>#{booking.id}</td>
+                  <td style={{ padding: '8px' }}>{booking.mentor}</td>
+                  <td style={{ padding: '8px' }}>{booking.skill}</td>
+                  <td style={{ padding: '8px' }}>{booking.date}</td>
+                  <td style={{ padding: '8px' }}>{booking.time}</td>
+                  <td style={{ 
+                    padding: '8px',
+                    color: booking.status === 'Completed' ? '#00FFD1' : 
+                           booking.status === 'Upcoming' ? '#00C7FF' : '#FF6B6B'
+                  }}>
+                    {booking.status}
+                  </td>
                 </tr>
               ))}
             </tbody>

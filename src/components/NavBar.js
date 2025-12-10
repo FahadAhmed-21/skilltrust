@@ -3,6 +3,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
+import { useMocks, mockUserProfile } from "../mocks";
 
 export default function NavBar({ setUser }) {
   const navigate = useNavigate();
@@ -21,6 +22,11 @@ export default function NavBar({ setUser }) {
   const isActive = (path) => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
+
+  const photo =
+    (useMocks && mockUserProfile?.photoURL) ||
+    auth.currentUser?.photoURL ||
+    "https://i.pravatar.cc/150?img=20";
 
   const navItems = [
     { path: '/dashboard', label: 'Learn', icon: '📚' },
@@ -51,7 +57,8 @@ export default function NavBar({ setUser }) {
       <div className="sidebar-footer">
         <div className="sidebar-profile" onClick={() => navigate('/profile')}>
           <img
-            src={auth.currentUser?.photoURL || 'https://placehold.co/40x40/1a2a32/FFFFFF?text=P'}
+            src={photo}
+            className="sidebar-avatar"
             alt="profile"
           />
           <div className="sidebar-profile-info">
