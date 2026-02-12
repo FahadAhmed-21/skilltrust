@@ -12,6 +12,8 @@ const userRoutes = require('./routes/userRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const sessionRoutes = require('./routes/sessionRoutes');
 const nftRoutes = require('./routes/nftRoutes');
+const mentorRoutes = require('./routes/mentorRoutes');
+const tokenRoutes = require('./routes/tokenRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -38,6 +40,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/nfts', nftRoutes);
+app.use('/api/mentors', mentorRoutes);
+app.use('/api/tokens', tokenRoutes);
 
 // Error handling
 app.use(errorHandler);

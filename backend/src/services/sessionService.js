@@ -1,16 +1,21 @@
 const { getFirestore } = require('../config/firebase');
 
 class SessionService {
-  constructor() {
-    this.db = getFirestore();
-    this.collection = this.db.collection('sessions');
+  get db() {
+    if (!this._db) {
+      this._db = getFirestore();
+    }
+    return this._db;
+  }
+
+  get collection() {
+    return this.db.collection('sessions');
   }
 
   async createSession(sessionData) {
     const session = {
       ...sessionData,
-      status: 'active',
-      createdAt: new Date(),
+      createdAt: sessionData.createdAt || new Date(),
       updatedAt: new Date()
     };
 
@@ -38,7 +43,7 @@ class SessionService {
 
   async getUserSessions(userId) {
     const snapshot = await this.collection
-      .where('participants', 'array-contains', userId)
+      .where('userId', '==', userId)
       .orderBy('createdAt', 'desc')
       .get();
 

@@ -77,6 +77,69 @@ class UserService {
       });
     });
   }
+
+  async incrementCompletedSessions(userId) {
+    const userRef = this.collection.doc(userId);
+    await this.db.runTransaction(async (transaction) => {
+      const doc = await transaction.get(userRef);
+      if (!doc.exists) {
+        throw new Error('User not found');
+      }
+      const currentSessions = doc.data().completedSessions || 0;
+      transaction.update(userRef, { 
+        completedSessions: currentSessions + 1,
+        updatedAt: new Date()
+      });
+    });
+  }
+
+  async updateReputation(userId, value) {
+    const userRef = this.collection.doc(userId);
+    await this.db.runTransaction(async (transaction) => {
+      const doc = await transaction.get(userRef);
+      if (!doc.exists) {
+        throw new Error('User not found');
+      }
+      const currentReputation = doc.data().reputation || 0;
+      transaction.update(userRef, { 
+        reputation: currentReputation + value,
+        updatedAt: new Date()
+      });
+    });
+  }
+
+  async deductTokens(userId, amount) {
+    const userRef = this.collection.doc(userId);
+    await this.db.runTransaction(async (transaction) => {
+      const doc = await transaction.get(userRef);
+      if (!doc.exists) {
+        throw new Error('User not found');
+      }
+      const currentTokens = doc.data().tokens || 0;
+      if (currentTokens < amount) {
+        throw new Error('Insufficient tokens');
+      }
+      transaction.update(userRef, { 
+        tokens: currentTokens - amount,
+        updatedAt: new Date()
+      });
+    });
+  }
+
+  async addTokens(userId, amount) {
+    const userRef = this.collection.doc(userId);
+    await this.db.runTransaction(async (transaction) => {
+      const doc = await transaction.get(userRef);
+      if (!doc.exists) {
+        throw new Error('User not found');
+      }
+      const currentTokens = doc.data().tokens || 0;
+      transaction.update(userRef, { 
+        tokens: currentTokens + amount,
+        updatedAt: new Date()
+      });
+    });
+  }
 }
 
 module.exports = new UserService();
