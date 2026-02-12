@@ -490,7 +490,7 @@ body {
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-sm);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 6px 0 #009688, var(--shadow-soft);
@@ -504,14 +504,14 @@ body {
   content: '';
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 0%;
   width: 0;
   height: 0;
   background: rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   transition: all 0.5s ease;
   transform: translate(-50%, -50%);
-}
+}vhujb
 
 .btn-3d-premium:hover {
   transform: translateY(-3px);

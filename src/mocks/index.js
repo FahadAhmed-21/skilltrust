@@ -105,6 +105,22 @@ export const mockBookings = [
 ];
 
 // ===========================================================
+// 5. LEADERBOARD — TOP 10 USERS
+// ===========================================================
+export const mockLeaderboard = [
+  { rank: 1, name: "Alex Chen", tokens: 2850, nfts: 12, avatar: "https://i.pravatar.cc/150?img=1" },
+  { rank: 2, name: "Sarah Kim", tokens: 2640, nfts: 10, avatar: "https://i.pravatar.cc/150?img=2" },
+  { rank: 3, name: "Marcus Johnson", tokens: 2420, nfts: 9, avatar: "https://i.pravatar.cc/150?img=3" },
+  { rank: 4, name: "Elena Rodriguez", tokens: 2180, nfts: 8, avatar: "https://i.pravatar.cc/150?img=4" },
+  { rank: 5, name: "David Park", tokens: 1950, nfts: 7, avatar: "https://i.pravatar.cc/150?img=5" },
+  { rank: 6, name: "Lisa Wang", tokens: 1720, nfts: 6, avatar: "https://i.pravatar.cc/150?img=6" },
+  { rank: 7, name: "James Wilson", tokens: 1580, nfts: 5, avatar: "https://i.pravatar.cc/150?img=7" },
+  { rank: 8, name: "Maya Patel", tokens: 1340, nfts: 4, avatar: "https://i.pravatar.cc/150?img=8" },
+  { rank: 9, name: "Ryan Thompson", tokens: 1120, nfts: 3, avatar: "https://i.pravatar.cc/150?img=9" },
+  { rank: 10, name: "Zoe Martinez", tokens: 890, nfts: 2, avatar: "https://i.pravatar.cc/150?img=10" }
+];
+
+// ===========================================================
 // API HELPER FUNCTIONS (KEPT UNTOUCHED)
 // ===========================================================
 

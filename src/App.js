@@ -19,6 +19,7 @@ import CodeEditor from "./pages/CodeEditor";
 import LiveChat from "./pages/LiveChat";
 import FloatingChatbot from "./components/FloatingChatbot";
 import Footer from "./components/Footer";
+import { WalletProvider } from "./contexts/WalletContext";
 import "./style.css";
 import "./styles/theme.css";
 
@@ -219,9 +220,11 @@ const AuthWrapper = () => {
 export default function App() {
   return (
     <ErrorBoundary>
-      <Router>
-        <AuthWrapper />
-      </Router>
+      <WalletProvider>
+        <Router>
+          <AuthWrapper />
+        </Router>
+      </WalletProvider>
     </ErrorBoundary>
   );
 }

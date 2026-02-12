@@ -33,9 +33,9 @@ export default function BookingPage() {
 
     try {
       const userRef = doc(db, "users", auth.currentUser.uid);
-      await updateDoc(userRef, {
+      await setDoc(userRef, {
         sessions: arrayUnion(sessionData)
-      });
+      }, { merge: true });
       alert(`Session booked: ${sessionData.skill} with ${sessionData.mentor} on ${sessionData.date} at ${sessionData.time}`);
       navigate(`/session/${sessionData.sessionId}`);
     } catch (e) {

@@ -4,10 +4,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useMocks, mockUserProfile } from "../mocks";
+import { useWallet } from "../contexts/WalletContext";
 
 export default function NavBar({ setUser }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isConnected, account, connectWallet, disconnectWallet, loading } = useWallet();
 
   const handleLogout = async () => {
     try {
@@ -70,10 +72,53 @@ export default function NavBar({ setUser }) {
             </div>
           </div>
         </div>
+        
+        {/* Wallet Connection */}
+        <div style={{ marginTop: '12px' }}>
+          {!isConnected ? (
+            <button
+              onClick={connectWallet}
+              disabled={loading}
+              className="btn-3d btn-3d-primary"
+              style={{ 
+                width: '100%', 
+                fontSize: '12px', 
+                padding: '10px',
+                background: loading ? '#666' : 'linear-gradient(135deg, #00FFD1, #00C7FF)',
+                cursor: loading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {loading ? '🔄 Connecting...' : '🦊 Connect Wallet'}
+            </button>
+          ) : (
+            <div>
+              <div style={{
+                background: 'rgba(0, 255, 209, 0.1)',
+                border: '1px solid rgba(0, 255, 209, 0.3)',
+                borderRadius: '8px',
+                padding: '8px',
+                fontSize: '11px',
+                color: '#00FFD1',
+                marginBottom: '8px',
+                textAlign: 'center'
+              }}>
+                🟢 {account?.slice(0, 6)}...{account?.slice(-4)}
+              </div>
+              <button
+                onClick={disconnectWallet}
+                className="btn-3d btn-3d-secondary"
+                style={{ width: '100%', fontSize: '11px', padding: '8px' }}
+              >
+                Disconnect
+              </button>
+            </div>
+          )}
+        </div>
+        
         <button
           onClick={handleLogout}
           className="btn-3d btn-3d-secondary"
-          style={{ width: '100%', marginTop: '12px', fontSize: '12px', padding: '10px' }}
+          style={{ width: '100%', marginTop: '8px', fontSize: '12px', padding: '10px' }}
         >
           Logout
         </button>
